@@ -1,0 +1,25 @@
+---
+description: Always commit and push completed work to GitHub without waiting to be asked
+alwaysApply: true
+---
+
+# Save work to GitHub automatically
+
+This repo must stay backed up on `origin` (https://github.com/KyryloY/rag-fastapi). Do not wait for a reminder.
+
+## After any completed slice of work
+
+1. Stage the relevant files (not secrets).
+2. Create a commit with an English message that says why.
+3. Push the current branch to `origin` immediately (`git push -u origin HEAD`).
+4. If work landed on a feature branch that `main` should also have, merge into `main` and push `origin/main` too so the default GitHub branch is not stale.
+
+## Never commit
+
+- `.env`, API keys, credentials
+- Chroma / `data/indexes/` / local caches
+- `.venv/`, `__pycache__/`, `.superpowers/` scratch
+
+## Do not wait
+
+Do not leave finished code, docs, or rule files only on disk. If `git status` is dirty after you finish a task, commit and push in the same turn.

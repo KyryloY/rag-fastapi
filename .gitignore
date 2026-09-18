@@ -30,3 +30,6 @@ data/indexes/
 Thumbs.db
 .idea/
 .vscode/
+
+.superpowers/
+
