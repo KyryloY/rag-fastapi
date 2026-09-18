@@ -65,10 +65,12 @@ def create_app(
         question = body.question.strip()
         if not question or len(question) > _MAX_QUESTION_LENGTH:
             raise HTTPException(status_code=400, detail="Invalid question")
-        index = _load_stats()
-        if index.chunks == 0:
+        try:
+            collection = open_collection(chroma_path, embedding_client)
+        except Exception:
             raise HTTPException(status_code=503, detail=_EMPTY_INDEX_DETAIL)
-        collection = open_collection(chroma_path, embedding_client)
+        if collection.count() == 0:
+            raise HTTPException(status_code=503, detail=_EMPTY_INDEX_DETAIL)
         chunks = query_chunks(collection, question, embedding_client)
         sources = [
             Source(
@@ -88,10 +90,11 @@ def create_app(
     return app
 
 
-_settings = Settings()
-app = create_app(
-    GeminiEmbeddingClient(_settings),
-    GeminiChatClient(_settings),
-    _settings.chroma_path,
-)
+def create_default_app() -> FastAPI:
+    settings = Settings()
+    return create_app(
+        GeminiEmbeddingClient(settings),
+        GeminiChatClient(settings),
+        settings.chroma_path,
+    )
 

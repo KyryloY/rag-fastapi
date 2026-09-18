@@ -38,7 +38,12 @@ def ingest_all(
         try:
             xml_text = download_law_xml(abbreviation, http)
             parsed = parse_law_xml(xml_text, abbreviation)
-            chunks.extend(split_chunks(parsed))
+            law_chunks = split_chunks(parsed)
+            if not law_chunks:
+                raise RuntimeError(
+                    f"Failed to ingest {abbreviation}: parsed to zero chunks"
+                )
+            chunks.extend(law_chunks)
         except Exception as exc:
             message = str(exc)
             if "Failed to ingest" not in message:

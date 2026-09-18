@@ -80,3 +80,34 @@ def test_ingest_all_parses_splits_and_indexes(tmp_path, capsys):
     assert f"laws={stats.laws}" in captured.out
     assert f"chunks={stats.chunks}" in captured.out
     assert f"characters={stats.characters}" in captured.out
+
+
+def test_ingest_all_fails_when_law_parses_to_zero_chunks(tmp_path, capsys):
+    xml_text = """<?xml version="1.0" encoding="UTF-8"?>
+<dokumente>
+  <norm>
+    <metadaten>
+      <jurabk>BUrlG</jurabk>
+      <enbez>Inhaltsübersicht</enbez>
+    </metadaten>
+    <textdaten>
+      <text><Content><P>Table of contents only.</P></Content></text>
+    </textdaten>
+  </norm>
+</dokumente>
+"""
+    payload = _zip_bytes("burlg.xml", xml_text)
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, content=payload, request=request)
+
+    with pytest.raises(SystemExit) as exc:
+        ingest_all(
+            abbreviations=("BUrlG",),
+            http=httpx.Client(transport=httpx.MockTransport(handler)),
+            embedding_client=KeywordEmbeddingClient(),
+            chroma_path=tmp_path,
+        )
+    assert exc.value.code == 1
+    captured = capsys.readouterr()
+    assert "Failed to ingest BUrlG:" in captured.err

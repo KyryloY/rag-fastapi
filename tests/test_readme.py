@@ -10,3 +10,8 @@ def test_readme_has_required_sections():
     assert "POST /ask" in README
     assert "python -m app.ingest" in README
     assert "LangChain" in README or "Agenten" in README
+    assert "uvicorn app.main:create_default_app --factory" in README
+    refused_block = README.split("Gehalt des CEOs von Siemens")[1]
+    assert '"refused": true' in refused_block
+    assert '"sources": []' not in refused_block
+    assert '"locator"' in refused_block

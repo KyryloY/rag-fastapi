@@ -57,7 +57,14 @@ Content-Type: application/json
 {
   "answer": "In den geladenen Dokumenten steht dazu nichts.",
   "refused": true,
-  "sources": []
+  "sources": [
+    {
+      "law": "MiLoG",
+      "paragraph": "1",
+      "locator": "MiLoG § 1",
+      "snippet": "Dieses Gesetz regelt den allgemeinen Mindestlohn."
+    }
+  ]
 }
 ```
 
@@ -67,7 +74,7 @@ Weitere Endpunkte: `GET /health`, `GET /` (einfache HTML-Oberfläche auf Deutsch
 
 1. **Umgebung:** `.env` aus `.env.example` anlegen und `GEMINI_API_KEY` setzen (Embedding- und Chat-Modelle optional überschreiben).
 2. **Index aufbauen:** `python -m app.ingest` — lädt alle Gesetze, erzeugt Embeddings über Gemini und schreibt Chroma unter `data/indexes/chroma`.
-3. **Lokal starten:** `uvicorn app.main:app --reload` — API unter `http://127.0.0.1:8000`.
+3. **Lokal starten:** `uvicorn app.main:create_default_app --factory --reload` — API unter `http://127.0.0.1:8000`.
 4. **Docker:** `docker compose up --build` — startet nur die API; der Index liegt im Volume `./data/indexes`. Ingest vor dem ersten Start separat auf dem Host ausführen oder einmalig im Container: `docker compose run --rm api python -m app.ingest`.
 
 Ohne Index antwortet `POST /ask` mit HTTP 503 (Index leer).

@@ -12,7 +12,7 @@ def _local_name(tag: str) -> str:
 def _child_text(parent: ET.Element, name: str) -> str:
     for child in parent:
         if _local_name(child.tag) == name:
-            return (child.text or "").strip()
+            return _collapse_whitespace("".join(child.itertext()))
     return ""
 
 
@@ -111,7 +111,7 @@ def _split_chunk_by_absatz(chunk: Chunk, max_chars: int, overlap: int) -> list[C
                     Chunk(
                         law=chunk.law,
                         paragraph=chunk.paragraph,
-                        locator=f"{chunk.law} § {chunk.paragraph} (part {i})",
+                        locator=f"{chunk.law} § {chunk.paragraph} Abs. {n} (part {i})",
                         title=chunk.title,
                         text=window,
                     )

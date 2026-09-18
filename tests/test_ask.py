@@ -105,3 +105,45 @@ def test_ceo_salary_is_refused(tmp_path: Path):
     body = response.json()
     assert body["refused"] is True
     assert not re.search(r"\d{3,}", body["answer"])
+    assert body["sources"]
+    assert body["sources"][0]["locator"]
+
+
+def test_ask_does_not_load_full_collection_stats(tmp_path: Path, monkeypatch):
+    def boom(*args, **kwargs):
+        raise AssertionError("collection_stats should not run on POST /ask")
+
+    monkeypatch.setattr("app.main.collection_stats", boom)
+    client = _client(tmp_path, with_chunks=True)
+    response = client.post(
+        "/ask",
+        json={"question": "Wie viele Urlaubstage stehen gesetzlich mindestens zu?"},
+    )
+    assert response.status_code == 200
+
+
+def test_chat_runtime_error_is_503(tmp_path: Path):
+    class BoomChat:
+        def complete(self, system: str, user: str):
+            raise RuntimeError("The language model is currently unavailable")
+
+    embeddings = KeywordEmbeddingClient()
+    chroma_path = tmp_path / "chroma"
+    replace_chunks(
+        open_collection(chroma_path, embeddings),
+        [wage_chunk(), leave_chunk()],
+        embeddings,
+    )
+    app = create_app(
+        embedding_client=embeddings,
+        chat_client=BoomChat(),
+        chroma_path=chroma_path,
+    )
+    response = TestClient(app).post(
+        "/ask",
+        json={"question": "Wie viele Urlaubstage stehen gesetzlich mindestens zu?"},
+    )
+    assert response.status_code == 503
+    assert response.json() == {
+        "detail": "The language model is currently unavailable"
+    }
