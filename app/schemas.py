@@ -9,6 +9,7 @@ class Source(BaseModel):
     law: str
     paragraph: str
     locator: str
+    title: str = ""
     snippet: str
 
 

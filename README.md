@@ -10,11 +10,11 @@ Texte werden von [gesetze-im-internet.de](https://www.gesetze-im-internet.de/) a
 
 `ArbZG`, `BUrlG`, `KSchG`, `TzBfG`, `EntgFG`, `NachwG`, `MiLoG`, `AGG`, `MuSchG`, `JArbSchG`, `BEEG`, `ArbSchG`
 
-Nach dem ersten erfolgreichen Ingest (Stand 2026-09-18):
+Nach dem Ingest mit Absatz-Chunks (Stand 2026-09-19):
 
 - **Gesetze:** 12
-- **Abschnitte:** 356
-- **Zeichen:** 448775
+- **Abschnitte:** 968 (meist ein Absatz je Abschnitt)
+- **Zeichen:** 447554
 
 ## API-Beispiel: `POST /ask`
 
@@ -37,8 +37,9 @@ Beispielantwort (Schema; Inhalt hängt vom Modell ab):
     {
       "law": "BUrlG",
       "paragraph": "3",
-      "locator": "BUrlG § 3",
-      "snippet": "Der Urlaub beträgt jährlich mindestens …"
+      "locator": "BUrlG § 3 Abs. 1",
+      "title": "Dauer des Urlaubs",
+      "snippet": "(1) Der Urlaub beträgt jährlich mindestens 24 Werktage."
     }
   ]
 }

@@ -71,8 +71,8 @@ def parse_law_xml(xml_text: str, law_fallback: str) -> list[Chunk]:
     return chunks
 
 
-_ABSATZ_SPLIT_RE = re.compile(r"(?m)(?=^\(\d+\))")
-_ABSATZ_PREFIX_RE = re.compile(r"^\((\d+)\)")
+_ABSATZ_SPLIT_RE = re.compile(r"(?=\(\d+[a-z]?\))")
+_ABSATZ_PREFIX_RE = re.compile(r"^\((\d+[a-z]?)\)")
 
 
 def _window_text(
@@ -100,7 +100,7 @@ def _split_chunk_by_absatz(chunk: Chunk, max_chars: int, overlap: int) -> list[C
         match = _ABSATZ_PREFIX_RE.match(part.lstrip())
         if not match:
             return None
-        absatz_items.append((match.group(1), part))
+        absatz_items.append((match.group(1), part.strip()))
 
     result: list[Chunk] = []
     for n, part_text in absatz_items:
@@ -134,15 +134,13 @@ def split_chunks(
 ) -> list[Chunk]:
     result: list[Chunk] = []
     for chunk in chunks:
-        if len(chunk.text) <= max_chars:
-            result.append(chunk)
-            continue
-
         absatz_split = _split_chunk_by_absatz(chunk, max_chars, overlap)
         if absatz_split is not None:
             result.extend(absatz_split)
             continue
-
+        if len(chunk.text) <= max_chars:
+            result.append(chunk)
+            continue
         windows = _window_text(chunk.text, max_chars, overlap)
         for i, window in enumerate(windows, start=1):
             result.append(

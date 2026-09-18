@@ -85,6 +85,8 @@ def test_leave_question_returns_sources(tmp_path: Path):
     assert body["sources"][0]["law"] == "BUrlG"
     assert body["sources"][0]["paragraph"] == "3"
     assert body["sources"][0]["snippet"].startswith("Der Urlaub")
+    assert body["sources"][0]["title"] == "Dauer des Urlaubs"
+    assert body["sources"][0]["snippet"] == "Der Urlaub beträgt jährlich mindestens 24 Werktage."
 
 
 def test_home_page_has_disclaimer(tmp_path: Path):
@@ -93,6 +95,7 @@ def test_home_page_has_disclaimer(tmp_path: Path):
     assert response.status_code == 200
     assert "Keine Rechtsberatung." in response.text
     assert "question" in response.text.lower()
+    assert "blockquote" in response.text
 
 
 def test_ceo_salary_is_refused(tmp_path: Path):

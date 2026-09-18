@@ -19,7 +19,7 @@ from app.schemas import AskRequest, AskResponse, HealthResponse, Source, StatsRe
 _EMPTY_INDEX_DETAIL = "The document index is empty. Run ingest first."
 _MODEL_UNAVAILABLE_DETAIL = "The language model is currently unavailable"
 _MAX_QUESTION_LENGTH = 2000
-_SNIPPET_LENGTH = 240
+_SNIPPET_LENGTH = 4000
 _TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 templates = Jinja2Templates(directory=str(_TEMPLATES_DIR))
 
@@ -77,6 +77,7 @@ def create_app(
                 law=chunk.law,
                 paragraph=chunk.paragraph,
                 locator=chunk.locator,
+                title=chunk.title,
                 snippet=chunk.text[:_SNIPPET_LENGTH],
             )
             for chunk in chunks

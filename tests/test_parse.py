@@ -17,6 +17,20 @@ def test_parse_burlg_paragraph_three():
     assert "24" in chunk.text
 
 
+def test_split_short_numbered_absatz_always():
+    text = (
+        "(1) Der Urlaub beträgt jährlich mindestens 24 Werktage."
+        "(2) Als Werktage gelten alle Kalendertage, die nicht Sonn- oder gesetzliche Feiertage sind."
+    )
+    chunk = Chunk(law="BUrlG", paragraph="3", locator="BUrlG § 3", title="Dauer des Urlaubs", text=text)
+    parts = split_chunks([chunk])
+    assert [part.locator for part in parts] == ["BUrlG § 3 Abs. 1", "BUrlG § 3 Abs. 2"]
+    assert parts[0].text.startswith("(1)")
+    assert "24" in parts[0].text
+    assert parts[1].text.startswith("(2)")
+    assert "Feiertage" in parts[1].text
+
+
 def test_split_on_absatz_when_over_limit():
     text = "(1) " + ("aaaa " * 150) + "\n(2) " + ("bbbb " * 150)
     chunk = Chunk(law="BUrlG", paragraph="3", locator="BUrlG § 3", title="", text=text)

@@ -50,6 +50,8 @@ def build_user_prompt(
     parts.extend(["", f"Question: {question}", "", "Excerpts:"])
     for chunk in chunks:
         parts.append(f"Locator: {chunk.locator}")
+        if chunk.title:
+            parts.append(f"Title: {chunk.title}")
         parts.append(f"Text: {chunk.text}")
         parts.append("")
     return "\n".join(parts).strip()
