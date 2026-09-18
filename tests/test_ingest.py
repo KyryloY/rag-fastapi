@@ -29,6 +29,16 @@ def test_download_failure_raises(monkeypatch):
         download_law_xml("BUrlG", client)
 
 
+def test_download_uses_year_slug_for_muschg():
+    def handler(request: httpx.Request) -> httpx.Response:
+        assert str(request.url) == "https://www.gesetze-im-internet.de/muschg_2018/xml.zip"
+        payload = _zip_bytes("muschg.xml", FIXTURE.read_text(encoding="utf-8"))
+        return httpx.Response(200, content=payload, request=request)
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    assert "24" in download_law_xml("MuSchG", client)
+
+
 def test_download_unzips_xml_from_official_url():
     xml_text = FIXTURE.read_text(encoding="utf-8")
     payload = _zip_bytes("burlg.xml", xml_text)

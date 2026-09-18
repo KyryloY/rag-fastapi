@@ -68,7 +68,7 @@ Do not download the full federal catalogue. After ingest, `GET /stats` and the R
    - use only the provided excerpts;
    - if the excerpts are insufficient, say that the loaded documents do not contain the answer and do not invent a figure, company fact, or legal result;
    - do not invent citations; the API will attach the retrieved locators itself.
-5. Chat model: `gemini-3.6-flash`, overridable via `GEMINI_CHAT_MODEL`. The chat call must request JSON (schema or JSON mime type), not free prose. Shape:
+5. Chat model: `gemini-3.5-flash-lite`, overridable via `GEMINI_CHAT_MODEL`. The chat call must request JSON (schema or JSON mime type), not free prose. Shape:
 
 ```json
 {"answer": "string", "refused": true}

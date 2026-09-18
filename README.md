@@ -10,11 +10,11 @@ Texte werden von [gesetze-im-internet.de](https://www.gesetze-im-internet.de/) a
 
 `ArbZG`, `BUrlG`, `KSchG`, `TzBfG`, `EntgFG`, `NachwG`, `MiLoG`, `AGG`, `MuSchG`, `JArbSchG`, `BEEG`, `ArbSchG`
 
-Nach dem ersten erfolgreichen Ingest (siehe unten) können Sie die Ausgabe von `python -m app.ingest` hier eintragen:
+Nach dem ersten erfolgreichen Ingest (Stand 2026-09-18):
 
-- **Gesetze:** (nach dem ersten Ingest eintragen)
-- **Abschnitte:** (nach dem ersten Ingest eintragen)
-- **Zeichen:** (nach dem ersten Ingest eintragen)
+- **Gesetze:** 12
+- **Abschnitte:** 356
+- **Zeichen:** 448775
 
 ## API-Beispiel: `POST /ask`
 

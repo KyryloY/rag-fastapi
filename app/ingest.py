@@ -8,13 +8,14 @@ from dotenv import load_dotenv
 
 from app.config import Settings
 from app.embeddings import EmbeddingClient, GeminiEmbeddingClient
-from app.laws import LAW_ABBREVIATIONS
+from app.laws import LAW_ABBREVIATIONS, law_xml_slug
 from app.parse_xml import parse_law_xml, split_chunks
 from app.retrieve import collection_stats, open_collection, replace_chunks
 
 
 def download_law_xml(abbreviation: str, http: httpx.Client) -> str:
-    url = f"https://www.gesetze-im-internet.de/{abbreviation.lower()}/xml.zip"
+    slug = law_xml_slug(abbreviation)
+    url = f"https://www.gesetze-im-internet.de/{slug}/xml.zip"
     response = http.get(url)
     if response.status_code != 200:
         raise RuntimeError(
@@ -62,7 +63,7 @@ def main() -> None:
     if not settings.gemini_api_key:
         print("GEMINI_API_KEY is missing", file=sys.stderr)
         raise SystemExit(1)
-    with httpx.Client(timeout=60) as http:
+    with httpx.Client(timeout=60, follow_redirects=True) as http:
         ingest_all(
             LAW_ABBREVIATIONS,
             http,
