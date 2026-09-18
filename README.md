@@ -1,5 +1,84 @@
-# RAG FastAPI
+# Arbeitsrecht-RAG (FastAPI)
 
-Portfolio demo: a small backend API for retrieval-augmented generation.
+Fragen zu einem festen Korpus deutscher Bundesgesetze lassen sich nicht zuverlässig beantworten, wenn man den gesamten Text in den Prompt packt — Kontextfenster und Halluzinationen setzen Grenzen. Dieses Demo-Projekt lädt offizielle Gesetzestexte, indiziert sie lokal und beantwortet Nutzerfragen per Retrieval-Augmented Generation (RAG) mit Quellenangaben.
 
-Work in progress. The scope will be documented after the first design pass.
+**Keine Rechtsberatung.** Antworten stützen sich nur auf die geladenen Dokumente; sie ersetzen keine anwaltliche Beratung.
+
+## Datenquelle
+
+Texte werden von [gesetze-im-internet.de](https://www.gesetze-im-internet.de/) als XML bezogen. Im Index sind derzeit diese zwölf Abkürzungen vorgesehen:
+
+`ArbZG`, `BUrlG`, `KSchG`, `TzBfG`, `EntgFG`, `NachwG`, `MiLoG`, `AGG`, `MuSchG`, `JArbSchG`, `BEEG`, `ArbSchG`
+
+Nach dem ersten erfolgreichen Ingest (siehe unten) können Sie die Ausgabe von `python -m app.ingest` hier eintragen:
+
+- **Gesetze:** (nach dem ersten Ingest eintragen)
+- **Abschnitte:** (nach dem ersten Ingest eintragen)
+- **Zeichen:** (nach dem ersten Ingest eintragen)
+
+## API-Beispiel: `POST /ask`
+
+Urlaubsfrage (Antwort aus dem Index):
+
+```http
+POST /ask
+Content-Type: application/json
+
+{"question": "Wie viele Urlaubstage stehen gesetzlich mindestens zu?"}
+```
+
+Beispielantwort (Schema; Inhalt hängt vom Modell ab):
+
+```json
+{
+  "answer": "Der gesetzliche Mindesturlaub beträgt 24 Werktage (BUrlG).",
+  "refused": false,
+  "sources": [
+    {
+      "law": "BUrlG",
+      "paragraph": "3",
+      "locator": "BUrlG § 3",
+      "snippet": "Der Urlaub beträgt jährlich mindestens …"
+    }
+  ]
+}
+```
+
+Frage außerhalb des Korpus (Modell lehnt ab, keine erfundenen Fakten):
+
+```http
+POST /ask
+Content-Type: application/json
+
+{"question": "Wie hoch ist das Gehalt des CEOs von Siemens?"}
+```
+
+```json
+{
+  "answer": "In den geladenen Dokumenten steht dazu nichts.",
+  "refused": true,
+  "sources": []
+}
+```
+
+Weitere Endpunkte: `GET /health`, `GET /` (einfache HTML-Oberfläche auf Deutsch).
+
+## Einrichtung und Betrieb
+
+1. **Umgebung:** `.env` aus `.env.example` anlegen und `GEMINI_API_KEY` setzen (Embedding- und Chat-Modelle optional überschreiben).
+2. **Index aufbauen:** `python -m app.ingest` — lädt alle Gesetze, erzeugt Embeddings über Gemini und schreibt Chroma unter `data/indexes/chroma`.
+3. **Lokal starten:** `uvicorn app.main:app --reload` — API unter `http://127.0.0.1:8000`.
+4. **Docker:** `docker compose up --build` — startet nur die API; der Index liegt im Volume `./data/indexes`. Ingest vor dem ersten Start separat auf dem Host ausführen oder einmalig im Container: `docker compose run --rm api python -m app.ingest`.
+
+Ohne Index antwortet `POST /ask` mit HTTP 503 (Index leer).
+
+## Technik (kurz)
+
+FastAPI, Chroma (lokal, Cosine), Google Gemini für Embeddings und Chat, Jinja2-Template ohne JS-Framework.
+
+## Bewusst nicht im Scope
+
+- Keine autonomen **Agenten** oder Tool-Schleifen
+- Kein Login / keine Mandantenfähigkeit
+- Keine Cloud-Vektor-Datenbank (nur lokales Chroma)
+- Kein **LangChain** — schlanke, nachvollziehbare Python-Pipeline
