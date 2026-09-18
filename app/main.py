@@ -4,8 +4,9 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 
 from app.answer import answer_question
-from app.chat import ChatClient
-from app.embeddings import EmbeddingClient
+from app.chat import ChatClient, GeminiChatClient
+from app.config import Settings
+from app.embeddings import EmbeddingClient, GeminiEmbeddingClient
 from app.retrieve import (
     COLLECTION_NAME,
     IndexStats,
@@ -85,3 +86,12 @@ def create_app(
         return AskResponse(answer=result.answer, refused=result.refused, sources=sources)
 
     return app
+
+
+_settings = Settings()
+app = create_app(
+    GeminiEmbeddingClient(_settings),
+    GeminiChatClient(_settings),
+    _settings.chroma_path,
+)
+
