@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dokumente>
+  <norm>
+    <metadaten>
+      <jurabk>BUrlG</jurabk>
+      <enbez>§ 3</enbez>
+      <titel>Dauer des Urlaubs</titel>
+    </metadaten>
+    <textdaten>
+      <text>
+        <Content>
+          <P>Der Urlaub beträgt jährlich mindestens 24 Werktage.</P>
+        </Content>
+      </text>
+    </textdaten>
+  </norm>
+  <norm>
+    <metadaten>
+      <jurabk>BUrlG</jurabk>
+      <enbez>Inhaltsübersicht</enbez>
+    </metadaten>
+    <textdaten>
+      <text>
+        <Content>
+          <P>This is a table of contents, not a paragraph.</P>
+        </Content>
+      </text>
+    </textdaten>
+  </norm>
+</dokumente>
