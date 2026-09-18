@@ -87,6 +87,14 @@ def test_leave_question_returns_sources(tmp_path: Path):
     assert body["sources"][0]["snippet"].startswith("Der Urlaub")
 
 
+def test_home_page_has_disclaimer(tmp_path: Path):
+    client = _client(tmp_path, with_chunks=True)
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "Keine Rechtsberatung." in response.text
+    assert "question" in response.text.lower()
+
+
 def test_ceo_salary_is_refused(tmp_path: Path):
     client = _client(tmp_path, with_chunks=True)
     response = client.post(

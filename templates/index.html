@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arbeitsrecht – Fragen</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+    .disclaimer { font-size: 0.9rem; color: #444; border-left: 3px solid #ccc; padding-left: 0.75rem; margin-bottom: 1.5rem; }
+    label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+    textarea { width: 100%; min-height: 6rem; box-sizing: border-box; }
+    button { margin-top: 0.75rem; padding: 0.5rem 1rem; cursor: pointer; }
+    #answer { white-space: pre-wrap; background: #f6f6f6; padding: 1rem; margin-top: 1.5rem; border-radius: 4px; }
+    #sources { margin-top: 1rem; }
+    .error { color: #a00; margin-top: 1rem; }
+    .refused { font-style: italic; color: #555; }
+    h2 { font-size: 1.1rem; margin-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Arbeitsrecht</h1>
+  <p class="disclaimer">Keine Rechtsberatung. Antworten stützen sich nur auf die geladenen Bundesgesetze zum Arbeitsrecht.</p>
+
+  <form id="ask-form">
+    <label for="question">Frage</label>
+    <textarea id="question" name="question" maxlength="2000" required></textarea>
+    <button type="submit">Fragen</button>
+  </form>
+
+  <div id="error" class="error" hidden></div>
+  <h2>Antwort</h2>
+  <div id="answer"></div>
+  <h2>Quellen</h2>
+  <ul id="sources"></ul>
+
+  <script>
+    const EMPTY_INDEX_DETAIL = "The document index is empty. Run ingest first.";
+    const MODEL_UNAVAILABLE_DETAIL = "The language model is currently unavailable";
+
+    function displayError(detail) {
+      const errorEl = document.getElementById("error");
+      let message = detail;
+      if (detail === EMPTY_INDEX_DETAIL) {
+        message = "Der Dokumentenindex ist leer.";
+      } else if (detail === MODEL_UNAVAILABLE_DETAIL) {
+        message = "Das Sprachmodell ist gerade nicht erreichbar.";
+      }
+      errorEl.textContent = message;
+      errorEl.hidden = false;
+    }
+
+    document.getElementById("ask-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const question = document.getElementById("question").value.trim();
+      const errorEl = document.getElementById("error");
+      const answerEl = document.getElementById("answer");
+      const sourcesEl = document.getElementById("sources");
+
+      errorEl.hidden = true;
+      errorEl.textContent = "";
+      answerEl.textContent = "";
+      answerEl.classList.remove("refused");
+      sourcesEl.innerHTML = "";
+
+      const response = await fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+
+      if (!response.ok) {
+        let detail = "Anfrage fehlgeschlagen.";
+        try {
+          const body = await response.json();
+          if (body.detail) {
+            detail = typeof body.detail === "string" ? body.detail : String(body.detail);
+          }
+        } catch (_) {}
+        displayError(detail);
+        return;
+      }
+
+      const data = await response.json();
+      answerEl.textContent = data.answer || "";
+      if (data.refused) {
+        answerEl.classList.add("refused");
+      }
+      (data.sources || []).forEach((source) => {
+        const li = document.createElement("li");
+        li.textContent = source.locator || "";
+        sourcesEl.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>

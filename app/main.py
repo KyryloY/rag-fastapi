@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.templating import Jinja2Templates
 
 from app.answer import answer_question
 from app.chat import ChatClient
@@ -18,6 +19,8 @@ _EMPTY_INDEX_DETAIL = "The document index is empty. Run ingest first."
 _MODEL_UNAVAILABLE_DETAIL = "The language model is currently unavailable"
 _MAX_QUESTION_LENGTH = 2000
 _SNIPPET_LENGTH = 240
+_TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
+templates = Jinja2Templates(directory=str(_TEMPLATES_DIR))
 
 
 def _zero_stats() -> IndexStats:
@@ -37,6 +40,10 @@ def create_app(
         except Exception:
             return _zero_stats()
         return collection_stats(collection)
+
+    @app.get("/")
+    def home(request: Request):
+        return templates.TemplateResponse(request, "index.html")
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:
