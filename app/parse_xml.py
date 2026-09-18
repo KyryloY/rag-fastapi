@@ -103,29 +103,17 @@ def _split_chunk_by_absatz(chunk: Chunk, max_chars: int, overlap: int) -> list[C
         absatz_items.append((match.group(1), part))
 
     result: list[Chunk] = []
-    oversized = [text for _, text in absatz_items if len(text) > max_chars]
     for n, part_text in absatz_items:
         if len(part_text) > max_chars:
-            if len(oversized) == 1:
-                windows = _window_text(part_text, max_chars, overlap)
-                for i, window in enumerate(windows, start=1):
-                    result.append(
-                        Chunk(
-                            law=chunk.law,
-                            paragraph=chunk.paragraph,
-                            locator=f"{chunk.law} § {chunk.paragraph} (part {i})",
-                            title=chunk.title,
-                            text=window,
-                        )
-                    )
-            else:
+            windows = _window_text(part_text, max_chars, overlap)
+            for i, window in enumerate(windows, start=1):
                 result.append(
                     Chunk(
                         law=chunk.law,
                         paragraph=chunk.paragraph,
-                        locator=f"{chunk.law} § {chunk.paragraph} Abs. {n}",
+                        locator=f"{chunk.law} § {chunk.paragraph} (part {i})",
                         title=chunk.title,
-                        text=part_text,
+                        text=window,
                     )
                 )
         else:
