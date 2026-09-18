@@ -33,7 +33,7 @@ def _settings() -> Settings:
     return Settings(
         gemini_api_key="test-key",
         gemini_embedding_model="gemini-embedding-001",
-        gemini_chat_model="gemini-2.0-flash",
+        gemini_chat_model="gemini-3.6-flash",
     )
 
 
@@ -91,11 +91,13 @@ def test_chat_complete_parses_json(monkeypatch):
     assert result.answer == "24 Werktage"
     assert result.refused is False
     call = models.generate_calls[0]
-    assert call["model"] == "gemini-2.0-flash"
+    assert call["model"] == "gemini-3.6-flash"
     assert call["contents"] == "user question"
     config = call["config"]
     mime = getattr(config, "response_mime_type", None) or config.get("response_mime_type")
     assert mime == "application/json"
+    schema = getattr(config, "response_json_schema", None) or config.get("response_json_schema")
+    assert schema["required"] == ["answer", "refused"]
 
 
 def test_chat_complete_wraps_api_errors(monkeypatch):

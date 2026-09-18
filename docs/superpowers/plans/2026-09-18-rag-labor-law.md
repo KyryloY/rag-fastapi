@@ -13,7 +13,7 @@
 - README language: German; all code comments, pytest names, logs, and stdout: English.
 - JSON API keys: `snake_case`.
 - Collection name: `labour_law`. Persist path: `data/indexes/chroma/` (gitignored).
-- Embedding model default: `gemini-embedding-001` (`GEMINI_EMBEDDING_MODEL`). Chat model default: `gemini-2.0-flash` (`GEMINI_CHAT_MODEL`).
+- Embedding model default: `gemini-embedding-001` (`GEMINI_EMBEDDING_MODEL`). Chat model default: `gemini-3.6-flash` (`GEMINI_CHAT_MODEL`).
 - `k=5` neighbours, or fewer if the collection has fewer chunks; never pad with empty sources.
 - Do not call the live Gemini API in pytest. Do not commit `.env` or Chroma data.
 - Do not add LangChain, auth, agents, web search, or browser-triggered ingest.
@@ -380,7 +380,7 @@ class Settings(BaseSettings):
 
     gemini_api_key: str = ""
     gemini_embedding_model: str = "gemini-embedding-001"
-    gemini_chat_model: str = "gemini-2.0-flash"
+    gemini_chat_model: str = "gemini-3.6-flash"
     chroma_path: Path = Path("data/indexes/chroma")
 ```
 
@@ -728,7 +728,7 @@ Expected: FAIL missing module.
 ```
 GEMINI_API_KEY=
 GEMINI_EMBEDDING_MODEL=gemini-embedding-001
-GEMINI_CHAT_MODEL=gemini-2.0-flash
+GEMINI_CHAT_MODEL=gemini-3.6-flash
 ```
 
 `app/ingest.py` `__main__`: load dotenv, require non-empty `GEMINI_API_KEY` or `sys.exit(1)` with `GEMINI_API_KEY is missing`. Then `ingest_all(LAW_ABBREVIATIONS, httpx.Client(timeout=60), GeminiEmbeddingClient(settings), settings.chroma_path)`.

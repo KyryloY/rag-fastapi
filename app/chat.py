@@ -18,6 +18,16 @@ class ChatClient(Protocol):
     def complete(self, system: str, user: str) -> ChatResult: ...
 
 
+ANSWER_JSON_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "answer": {"type": "string"},
+        "refused": {"type": "boolean"},
+    },
+    "required": ["answer", "refused"],
+}
+
+
 class GeminiChatClient:
     def __init__(self, settings: Settings) -> None:
         self._model = settings.gemini_chat_model
@@ -31,6 +41,7 @@ class GeminiChatClient:
                 config=types.GenerateContentConfig(
                     system_instruction=system,
                     response_mime_type="application/json",
+                    response_json_schema=ANSWER_JSON_SCHEMA,
                 ),
             )
             payload = json.loads(response.text)

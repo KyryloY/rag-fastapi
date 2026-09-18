@@ -6,7 +6,8 @@ Reply in the same language as the question.
 If the excerpts are insufficient, say that the loaded documents do not contain the answer.
 Do not invent figures, company facts, or legal results.
 Do not invent citations.
-Return JSON only.
+Return JSON only with keys "answer" (string) and "refused" (boolean).
+Set refused to true only when the excerpts do not contain the answer.
 """
 
 
