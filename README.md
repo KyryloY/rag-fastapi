@@ -81,7 +81,7 @@ Ohne Index antwortet `POST /ask` mit HTTP 503 (Index leer).
 
 ## Technik (kurz)
 
-FastAPI, Chroma (lokal, Cosine), Google Gemini für Embeddings und Chat, Jinja2-Template ohne JS-Framework.
+FastAPI, Chroma (lokal, Cosine), Google Gemini für Embeddings und Chat, Lingua zur Erkennung von Deutsch/Englisch in der Frage (bei Abweichung in der Antwort ein Wiederholungsversuch), Jinja2-Template ohne JS-Framework.
 
 ## Bewusst nicht im Scope
 

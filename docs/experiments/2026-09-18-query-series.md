@@ -281,5 +281,7 @@ Die Pipeline übersetzt den Korpus nicht. Sie sucht mit dem englischen Fragesatz
 9. **Anderes Flash-Lite vs. 3.6-flash.** Dieselbe 17er-Liste, nur das Chat-Modell tauschen; Zählung der Sprach- und Verweigerungsfehler.
 10. **HTML-Entities.** P1 lieferte einmal `&#228;` statt Umlaute. Für Screenshots die Ausgabe normalisieren oder das Modell härter auf Unicode verpflichten.
 
+Nachtrag 2026-09-18: Fragen- und Antwortsprache laufen über Lingua (nur `de`/`en`). Die englische Urlaubsfrage liefert danach eine englische Antwort («at least 24 working days»). Bei Abweichung gibt es einen zweiten Chat-Aufruf.
+
 Diese Datei ist das Rohprotokoll. Screenshots der HTML-Seite gehören nicht hierhin; sie kommen später auf kyryloyasko.de.
 
