@@ -12,10 +12,11 @@
     button { margin-top: 0.75rem; padding: 0.5rem 1rem; cursor: pointer; }
     #answer { white-space: pre-wrap; background: #f6f6f6; padding: 1rem; margin-top: 1.5rem; border-radius: 4px; }
     #sources { margin-top: 1rem; list-style: none; padding: 0; }
-    #sources li { margin-bottom: 1rem; }
-    #sources .locator { font-weight: 600; }
+    #sources li { margin-bottom: 0.5rem; }
+    #sources details { border: 1px solid #ddd; border-radius: 4px; padding: 0.5rem 0.75rem; }
+    #sources summary { cursor: pointer; font-weight: 600; }
     #sources .title { color: #555; font-weight: 400; }
-    #sources blockquote { margin: 0.35rem 0 0; padding: 0.75rem 1rem; background: #f6f6f6; border-left: 3px solid #ccc; white-space: pre-wrap; }
+    #sources blockquote { margin: 0.5rem 0 0; padding: 0.75rem 1rem; background: #f6f6f6; border-left: 3px solid #ccc; white-space: pre-wrap; }
     .error { color: #a00; margin-top: 1rem; }
     .refused { font-style: italic; color: #555; }
     h2 { font-size: 1.1rem; margin-top: 1.5rem; }
@@ -91,21 +92,23 @@
       }
       (data.sources || []).forEach((source) => {
         const li = document.createElement("li");
-        const head = document.createElement("div");
-        head.className = "locator";
-        head.textContent = source.locator || "";
+        const details = document.createElement("details");
+        details.name = "quellen";
+        const summary = document.createElement("summary");
+        summary.textContent = source.locator || "";
         if (source.title) {
           const title = document.createElement("span");
           title.className = "title";
           title.textContent = " — " + source.title;
-          head.appendChild(title);
+          summary.appendChild(title);
         }
-        li.appendChild(head);
+        details.appendChild(summary);
         if (source.snippet) {
           const quote = document.createElement("blockquote");
           quote.textContent = source.snippet;
-          li.appendChild(quote);
+          details.appendChild(quote);
         }
+        li.appendChild(details);
         sourcesEl.appendChild(li);
       });
     });

@@ -95,6 +95,8 @@ def test_home_page_has_disclaimer(tmp_path: Path):
     assert response.status_code == 200
     assert "Keine Rechtsberatung." in response.text
     assert "question" in response.text.lower()
+    assert 'createElement("details")' in response.text
+    assert 'createElement("summary")' in response.text
     assert "blockquote" in response.text
 
 
