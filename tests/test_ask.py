@@ -95,6 +95,8 @@ def test_home_page_has_disclaimer(tmp_path: Path):
     assert response.status_code == 200
     assert "Keine Rechtsberatung." in response.text
     assert "question" in response.text.lower()
+    assert 'id="sources-block"' in response.text
+    assert 'id="sources-block" hidden' in response.text
     assert 'createElement("details")' in response.text
     assert 'createElement("summary")' in response.text
     assert "blockquote" in response.text
@@ -110,8 +112,7 @@ def test_ceo_salary_is_refused(tmp_path: Path):
     body = response.json()
     assert body["refused"] is True
     assert not re.search(r"\d{3,}", body["answer"])
-    assert body["sources"]
-    assert body["sources"][0]["locator"]
+    assert body["sources"] == []
 
 
 def test_ask_does_not_load_full_collection_stats(tmp_path: Path, monkeypatch):

@@ -35,8 +35,10 @@
   <div id="error" class="error" hidden></div>
   <h2>Antwort</h2>
   <div id="answer"></div>
-  <h2>Quellen</h2>
-  <ul id="sources"></ul>
+  <section id="sources-block" hidden>
+    <h2>Quellen</h2>
+    <ul id="sources"></ul>
+  </section>
 
   <script>
     const EMPTY_INDEX_DETAIL = "The document index is empty. Run ingest first.";
@@ -60,12 +62,14 @@
       const errorEl = document.getElementById("error");
       const answerEl = document.getElementById("answer");
       const sourcesEl = document.getElementById("sources");
+      const sourcesBlock = document.getElementById("sources-block");
 
       errorEl.hidden = true;
       errorEl.textContent = "";
       answerEl.textContent = "";
       answerEl.classList.remove("refused");
       sourcesEl.innerHTML = "";
+      sourcesBlock.hidden = true;
 
       const response = await fetch("/ask", {
         method: "POST",
@@ -90,7 +94,9 @@
       if (data.refused) {
         answerEl.classList.add("refused");
       }
-      (data.sources || []).forEach((source) => {
+      const visibleSources = data.refused ? [] : (data.sources || []);
+      sourcesBlock.hidden = visibleSources.length === 0;
+      visibleSources.forEach((source) => {
         const li = document.createElement("li");
         const details = document.createElement("details");
         details.name = "quellen";

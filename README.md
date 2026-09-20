@@ -45,7 +45,7 @@ Beispielantwort (Schema; Inhalt hängt vom Modell ab):
 }
 ```
 
-Frage außerhalb des Korpus (Modell lehnt ab, keine erfundenen Fakten):
+Frage außerhalb des Korpus (Modell lehnt ab, keine erfundenen Fakten und keine Quellenliste):
 
 ```http
 POST /ask
@@ -58,14 +58,7 @@ Content-Type: application/json
 {
   "answer": "In den geladenen Dokumenten steht dazu nichts.",
   "refused": true,
-  "sources": [
-    {
-      "law": "MiLoG",
-      "paragraph": "1",
-      "locator": "MiLoG § 1",
-      "snippet": "Dieses Gesetz regelt den allgemeinen Mindestlohn."
-    }
-  ]
+  "sources": []
 }
 ```
 

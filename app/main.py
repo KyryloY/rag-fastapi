@@ -72,20 +72,22 @@ def create_app(
         if collection.count() == 0:
             raise HTTPException(status_code=503, detail=_EMPTY_INDEX_DETAIL)
         chunks = query_chunks(collection, question, embedding_client)
-        sources = [
-            Source(
-                law=chunk.law,
-                paragraph=chunk.paragraph,
-                locator=chunk.locator,
-                title=chunk.title,
-                snippet=chunk.text[:_SNIPPET_LENGTH],
-            )
-            for chunk in chunks
-        ]
         try:
             result = answer_question(question, chunks, chat_client)
         except Exception:
             raise HTTPException(status_code=503, detail=_MODEL_UNAVAILABLE_DETAIL)
+        sources = []
+        if not result.refused:
+            sources = [
+                Source(
+                    law=chunk.law,
+                    paragraph=chunk.paragraph,
+                    locator=chunk.locator,
+                    title=chunk.title,
+                    snippet=chunk.text[:_SNIPPET_LENGTH],
+                )
+                for chunk in chunks
+            ]
         return AskResponse(answer=result.answer, refused=result.refused, sources=sources)
 
     return app
